@@ -1,0 +1,44 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, 'feature/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-and-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck on all scripts
+        run: |
+          find . -name "*.sh" -exec shellcheck {} \;
+
+      - name: Check for hardcoded secrets
+        run: |
+          if grep -rE "(password|secret|api_key|token)\s*=\s*['\"][^'\"]{8,}" \
+            --include="*.sh" --include="*.py" .; then
+            echo "Hardcoded secret detected"
+            exit 1
+          fi
+
+      - name: Verify scripts are executable
+        run: |
+          find . -name "*.sh" | while read script; do
+            if [ ! -x "$script" ]; then
+              echo "$script is not executable"
+              exit 1
+            fi
+          done
+
+      - name: Run monitor script (dry run)
+        run: |
+          bash monitor.sh
+          echo "Script executed successfully"
