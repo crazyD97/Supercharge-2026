@@ -9,13 +9,16 @@ on:
 jobs:
   security-and-quality:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Install shellcheck
         run: sudo apt-get install -y shellcheck
+
+      - name: Make scripts executable
+        run: sudo chmod +x ./monitor.sh
 
       - name: Run shellcheck on all scripts
         run: |
