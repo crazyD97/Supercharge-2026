@@ -3,7 +3,7 @@
 # System Monitor Script
 LOGFILE=~/system_monitor.log
 ALERT_LOG=~/alerts.log
-TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M')
 
 # CPU usage (idle % subtracted from 100)
 CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}')
